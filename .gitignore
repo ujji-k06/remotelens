@@ -33,3 +33,5 @@ agent-transcripts/
 .env
 .env.*
 !.env.example
+Packages/
+DevPackages/

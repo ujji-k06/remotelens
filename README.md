@@ -4,7 +4,7 @@ RemoteLens is an opt-in Roblox networking instrumentation layer for measuring re
 
 v0.1 focuses on honest server-side boundaries:
 
-- **C2S `RemoteEvent` traffic:** passively observed at `OnServerEvent` with `observeEvent`.
+- **C2S `RemoteEvent` / `UnreliableRemoteEvent` traffic:** passively observed at `OnServerEvent` with `observeEvent`.
 - **C2S `RemoteFunction` traffic:** observed by installing the one supported `OnServerInvoke` handler with `bindFunction`.
 - **S2C traffic:** measured only when game code sends through `wrapEvent` / `wrapFunction`.
 - **Payload size:** heuristic only. Payload values are inspected transiently, converted to an estimated byte count, and never retained.
@@ -16,6 +16,7 @@ v0.1 focuses on honest server-side boundaries:
 RemoteLens/
 ├── default.project.json
 ├── README.md
+├── wally.toml
 ├── src/
 │   ├── server/
 │   │   └── RemoteLens.lua
@@ -24,6 +25,8 @@ RemoteLens/
 │       ├── PayloadEstimate.lua
 │       └── Store.lua
 └── tests/
+    ├── format_test.lua
+    ├── payload_test.lua
     └── store_test.lua
 ```
 
@@ -48,6 +51,8 @@ The project maps:
 - `src/shared` → `ReplicatedStorage.RemoteLens.Shared`
 - `src/server` → `ServerScriptService.RemoteLens.Server`
 
+In another Rojo place, map those same two folders. BattleArena (`aba-clone`) is the live consumer: it observes `CombatRemote` and `ProjectileCorrectionRemote` at server boot.
+
 ## Basic usage
 
 ```lua
@@ -67,9 +72,20 @@ local combatOut = lens:wrapEvent(combatAction)
 combatOut:FireClient(player, "hit", 42)
 combatOut:FireAllClients("round-start")
 
-local snapshot = lens:snapshot()
-print(RemoteLens.FormatSnapshot.format(snapshot))
+print(lens:dump())
 ```
+
+`observeEvent` also accepts `UnreliableRemoteEvent`.
+
+### BattleArena
+
+After Play in BattleArena, dump from the server command bar:
+
+```lua
+require(game.ServerScriptService.server.Diagnostics.RemoteLensProbe).Print()
+```
+
+C2S is recorded automatically. S2C still needs `wrapEvent` at the send site.
 
 ### RemoteFunctions
 
@@ -145,7 +161,15 @@ No payload object or argument value is stored in the metrics store.
 The store test uses fixed timestamps and no Roblox APIs:
 
 ```bash
+./tools/check.sh
+```
+
+Or individually:
+
+```bash
 lua tests/store_test.lua
+lua tests/payload_test.lua
+lua tests/format_test.lua
 ```
 
 It verifies rate bucketing, direction totals, estimated byte aggregation, and overflow behavior for bounded remote/player cardinality. Any Lua runtime with `dofile` can run it because `Store.lua` intentionally stays within a small Lua-compatible subset.

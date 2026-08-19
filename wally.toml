@@ -1,0 +1,10 @@
+[package]
+name = "ujji-k06/remotelens"
+description = "Opt-in Roblox networking instrumentation for measuring remote activity."
+version = "0.1.0"
+registry = "https://github.com/UpliftGames/wally-index"
+realm = "server"
+repository = "https://github.com/ujji-k06/remotelens"
+authors = ["ujji <ujjwal.kharola06@gmail.com>"]
+private = true
+exclude = ["docs", "tests", ".github"]

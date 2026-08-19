@@ -12,7 +12,10 @@ local RemoteLens = {}
 RemoteLens.__index = RemoteLens
 
 local function assertRemoteEvent(remote)
-	assert(remote and remote:IsA("RemoteEvent"), "expected RemoteEvent")
+	assert(
+		remote and (remote:IsA("RemoteEvent") or remote:IsA("UnreliableRemoteEvent")),
+		"expected RemoteEvent or UnreliableRemoteEvent"
+	)
 end
 
 local function assertRemoteFunction(remote)
@@ -111,6 +114,10 @@ end
 
 function RemoteLens:snapshot(windowSeconds)
 	return self.store:snapshot(self.clock(), windowSeconds)
+end
+
+function RemoteLens:dump(windowSeconds)
+	return FormatSnapshot.format(self:snapshot(windowSeconds))
 end
 
 RemoteLens.Store = Store

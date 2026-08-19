@@ -1,0 +1,22 @@
+{
+  "name": "RemoteLens",
+  "tree": {
+    "$className": "DataModel",
+    "ReplicatedStorage": {
+      "RemoteLens": {
+        "$className": "Folder",
+        "Shared": {
+          "$path": "src/shared"
+        }
+      }
+    },
+    "ServerScriptService": {
+      "RemoteLens": {
+        "$className": "Folder",
+        "Server": {
+          "$path": "src/server"
+        }
+      }
+    }
+  }
+}

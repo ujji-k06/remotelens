@@ -77,12 +77,14 @@ function RemoteLens:wrapEvent(remoteEvent)
 	local lens = self
 	local wrapper = {}
 
+	-- selene: allow(shadowing)
 	function wrapper:FireClient(player, ...)
 		local estimatedBytes = PayloadEstimate.args(...)
 		lens:_record(remoteEvent, "S2C", estimatedBytes, player)
 		return remoteEvent:FireClient(player, ...)
 	end
 
+	-- selene: allow(shadowing)
 	function wrapper:FireAllClients(...)
 		local estimatedBytes = PayloadEstimate.args(...)
 		for _, player in ipairs(lens.players:GetPlayers()) do
@@ -99,6 +101,7 @@ function RemoteLens:wrapFunction(remoteFunction)
 	local lens = self
 	local wrapper = {}
 
+	-- selene: allow(shadowing)
 	function wrapper:InvokeClient(player, ...)
 		local requestBytes = PayloadEstimate.args(...)
 		lens:_record(remoteFunction, "S2C", requestBytes, player)

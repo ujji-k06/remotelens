@@ -93,7 +93,7 @@ end
 
 local function sortedRows(map, overflowKey, project)
 	local rows = {}
-	for key, entry in pairs(map) do
+	for _, entry in pairs(map) do
 		if entry.totalCalls > 0 then
 			rows[#rows + 1] = project(entry)
 		end
